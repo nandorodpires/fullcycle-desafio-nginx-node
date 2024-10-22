@@ -1,5 +1,4 @@
 services:
-
   nginx:
     image: nginx:alpine
     container_name: nginx
@@ -7,37 +6,37 @@ services:
       - "8080:80"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - app
     networks:
       - app-network  
 
   app:
     build:
-      context: ./app
-    container_name: app
-    volumes:
-      - ./app:/usr/src/app
+      context: .
+    container_name: app 
+    volumes:       
+      - .:/app
     depends_on:
       - db
     networks:
       - app-network
+    ports:
+      - "3000:3000"
     environment:
       - MYSQL_HOST=db
       - MYSQL_USER=root
       - MYSQL_PASSWORD=root
-      - MYSQL_DB=fullcycle
+      - MYSQL_DB=fullcycle  
 
   db:
-    image: mysql:5.7
+    image: mariadb:10.9
     container_name: db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: fullcycle
     volumes:
-      - ./db/data:/var/lib/mysql
+      - desafio_data:/var/lib/mysql 
     ports:
-      - "3307:3306"
+      - "3306:3306"
     networks:
       - app-network
 
@@ -46,4 +45,4 @@ networks:
     driver: bridge
 
 volumes:
-  db-data:
+  desafio_data:  
