@@ -10,27 +10,34 @@ const config = {
   database: 'fullcycle'
 }
 
-const connection = mysql.createConnection(config)
+const connection = mysql.createConnection(config);
 
-// criando a tabela
-const sqlCreate = `CREATE TABLE IF NOT EXISTS people (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL)`
-connection.query(sqlCreate, (err) => {
-  if (err) console.log('Erro ao criar a tabela: ', err)
-})
+connection.connect((err) => {
+  if (err) {
+    console.error('Erro ao conectar ao banco de dados:', err);
+    return;
+  }
+  console.log('Conectado ao banco de dados!');
 
-// inserindo uma pessoa 
-const sqlInsert = `INSERT INTO people(name) VALUES ('Fernando Rodrigues')`
-connection.query(sqlInsert, (err) => {
-  if (err) console.log('Erro ao cadastrar a pessoa: ', err)
-})
+  // Criando a tabela
+  const sqlCreate = `CREATE TABLE IF NOT EXISTS people (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL)`;
+  connection.query(sqlCreate, (err) => {
+    if (err) console.log('Erro ao criar a tabela:', err);
+  });
 
+  // Inserindo uma pessoa
+  const sqlInsert = `INSERT INTO people(name) VALUES ('Fernando Rodrigues')`;
+  connection.query(sqlInsert, (err) => {
+    if (err) console.log('Erro ao cadastrar a pessoa:', err);
+  });
+});
 
 app.get('/', (req, res) => {
   connection.query('SELECT name FROM people', (err, results) => {
     if (err) return res.status(500).send('Erro ao acessar o banco de dados');
     const namesList = results.map(person => `<li>${person.name}</li>`).join('');
     res.send(`<h1>Full Cycle Rocks!</h1><ul>${namesList}</ul>`);
-  });  
+  });
 });
 
 app.listen(port, () => {
