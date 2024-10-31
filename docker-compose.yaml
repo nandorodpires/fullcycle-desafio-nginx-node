@@ -1,7 +1,7 @@
 services:
   db:
     image: mariadb:10.9
-    container_name: db
+    container_name: desafio_db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: fullcycle      
@@ -15,10 +15,11 @@ services:
   app:
     build:
       context: .
-    container_name: app 
+    container_name: desafio_app 
     command: dockerize -wait tcp://db:3306 -timeout 60s node src/index.js
     volumes:       
       - .:/app  
+      - /app/node_modules
     networks:
       - app-network
     ports:
@@ -28,7 +29,7 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: nginx
+    container_name: desafio_nginx
     ports:
       - "8080:80"
     volumes:
